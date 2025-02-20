@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+
+    <title>Travel Tales | Travel,click and explore</title>
+  </head>
+  <body>
+    <nav>
+      <div class="nav__header">
+        <div class="nav__logo">
+          <a href="#">Travel <span>Tales</span>.</a>
+        </div>
+        <div class="nav__menu__btn" id="menu-btn">
+          <span><i class="ri-menu-line"></i></span>
+        </div>
+      </div>
+      <ul class="nav__links" id="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Sign out</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <div class="nav__btns">
+        <button class="btn sign__up">Sign Up</button>
+        <button class="btn sign__in">Sign In</button>
+      </div>
+    </nav>
+    <header class="header__container">
+      <div class="header__image">
+        <img src="static/images.jpeg" alt="header" />
+      </div>
+      <div class="header__content">
+        <h1>LET'S GO!<br />THE <span>ADVENTURE</span> IS WAITING FOR YOU</h1>
+        <p>
+          Embark on Your Journey Today and Discover Uncharted Wonders Around the
+          World - Your Adventure Awaits with Exciting Experiences, Unforgettable
+          Memories, and Endless Opportunities
+        </p>
+        <h1>Upload or Click Pictures to Predict Location</h1>
+        <div class="upload-section">
+            <input type="file" id="upload1" accept="image/*" capture>
+            <input type="file" id="upload2" accept="image/*" capture>
+            <input type="file" id="upload3" accept="image/*" capture>
+            <button onclick="processImages()">Predict Location</button>
+        </div>
+        
+        <div id="predictionResult"></div>
+        <div class="model-container">
+            <model-viewer id="touristModel" src="static/Brad_Pitt_OBJ.obj" auto-rotate camera-controls></model-viewer>
+        </div>
+        <div class="bar">
+          Copyright © 2025 Travel Tales. All rights reserved.
+        </div>
+      </div>
+    </header>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="main.js"></script>
+    <script>
+        function processImages() {
+            let files = [
+                document.getElementById('upload1').files[0],
+                document.getElementById('upload2').files[0],
+                document.getElementById('upload3').files[0]
+            ];
+            
+            let formData = new FormData();
+            files.forEach((file, index) => formData.append(`image${index + 1}`, file));
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('predictionResult').innerText = `Predicted Location: ${data.location}`;
+            });
+        }
+
+        document.getElementById('touristModel').addEventListener('click', function() {
+            let audio = new Audio('/static/audio/location_audio.mp3');
+            audio.play();
+        });
+    </script>
+  </body>
+</html>
